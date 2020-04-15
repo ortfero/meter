@@ -50,3 +50,16 @@ int main() {
   return 0;
 }
 ```
+
+Possible output:
+```
+Press ENTER to stop
+items processed (hits: 91, average: 10958 us, min: 10025.6 us, max: 11600.7 us)
+items processed (hits: 92, average: 10957.4 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 92, average: 10914.3 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 92, average: 10957.9 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 91, average: 10946.5 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 92, average: 10946.9 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 92, average: 10957.1 us, min: 10025.6 us, max: 11618 us)
+items processed (hits: 91, average: 10958.1 us, min: 10025.6 us, max: 11618 us)
+```

@@ -1,7 +1,7 @@
 # meter
 C++17 one-header library for runtime stats
 
-##snippet
+## Snippet
 ```cpp
 #include <thread>
 #include <future>

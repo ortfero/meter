@@ -1,8 +1,3 @@
-# meter
-C++17 one-header library for runtime stats
-
-#snippet
-```cpp
 #include <thread>
 #include <future>
 #include <chrono>
@@ -49,4 +44,3 @@ int main() {
 
   return 0;
 }
-```

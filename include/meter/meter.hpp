@@ -20,8 +20,8 @@ namespace meter {
         time_type time_min{std::numeric_limits<time_type>::max()};
         time_type time_max{std::numeric_limits<time_type>::min()};
         
-        template<typename S> S& operator << (S& stream, timed_value const& tv) {
-            if(count == 0)
+        template<typename S> friend S& operator << (S& stream, timed_value const& tv) {
+            if(tv.count == 0)
                 stream << "{ count: 0, time: 0, min: 0, max: 0 }";
             else
                 stream << "{ count: " << tv.count
@@ -45,17 +45,17 @@ namespace meter {
         timed_value current;
         timed_value total;
         
-        
+        slice() noexcept = default;
         slice(time_point now) noexcept: time_from{now}, time_to{now} { }
         slice(slice const&) noexcept = default;
         slice& operator = (slice const&) noexcept = default;
         
-        slice(time_point time_from, time_point time_to, T current, T total) noexcept
+        slice(time_point time_from, time_point time_to, timed_value const& current, timed_value const& total) noexcept
             : time_from{time_from}, time_to{time_to}, current{current}, total{total}
         { }
         
         
-        template<typename S> S& operator << (S& stream, slice const& slice) {
+        template<typename S> friend S& operator << (S& stream, slice const& slice) {
             using namespace std::chrono;
             auto const delta = duration_cast<seconds>(slice.time_to - slice.time_from);
             stream << "{ period: " << delta.count()
@@ -111,10 +111,10 @@ namespace meter {
             auto const current_time = current_.count == 0 ?
                 time_type(0) :
                 time_type(double(current_.time) / double(current_.count) + 0.5);
-            auto const total_time = total_count_ == 0 ?
+            auto const total_time = total_.count == 0 ?
                 time_type(0) :
                 time_type(double(total_.time) / double(total_.count) + 0.5);
-            auto const r = struct slice<C>{last_, now,
+            auto const r = meter::slice<C>{last_, now,
                 timed_value{current_.count, current_time, current_.time_min, current_.time_max},
                 timed_value{total_.count, total_time, total_.time_min, total_.time_max}};
             last_ = now;
@@ -124,6 +124,28 @@ namespace meter {
         }
 
     }; // counter
+    
+    
+    template<typename C, typename D>
+    class timer {
+        C& counter_;
+        std::chrono::steady_clock::time_point started_;
+        
+    public:
+        using counter_type = C;
+        using duration_type = D;
+        
+        timer(counter_type& counter) noexcept
+            : counter_{counter}, started_{std::chrono::steady_clock::now()} { }
+    
+        timer(timer const&) noexcept = default;
+        timer& operator = (timer const&) noexcept = default;
+        
+        ~timer() {
+            auto const now = std::chrono::steady_clock::now();
+            counter_ += std::chrono::duration_cast<D>(now - started_).count();
+        }
+    }; // timer
  
 
 } // meter

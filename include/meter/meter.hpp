@@ -22,10 +22,10 @@ namespace meter {
         
         template<typename S> friend S& operator << (S& stream, timed_value const& tv) {
             if(tv.count == 0)
-                stream << "{ count: 0, time: 0, min: 0, max: 0 }";
+                stream << "{ count: 0, avg: 0, min: 0, max: 0 }";
             else
                 stream << "{ count: " << tv.count
-                       << ", time: " << tv.time
+                       << ", avg: " << tv.time
                        << ", min: " << tv.time_min
                        << ", max: " << tv.time_max
                        << " }";
@@ -58,14 +58,14 @@ namespace meter {
         template<typename S> friend S& operator << (S& stream, slice const& slice) {
             using namespace std::chrono;
             auto const delta = duration_cast<seconds>(slice.time_to - slice.time_from);
-            stream << "{ period: " << delta.count()
-                   << "secs, current: " << slice.current
+            stream << "{ period: '" << delta.count()
+                   << "secs', current: " << slice.current
                    << ", total: " << slice.total
                    << " }";
             return stream;
         }
         
-    }; // value
+    }; // slice
     
     
     template<typename C, typename L> class counter {
